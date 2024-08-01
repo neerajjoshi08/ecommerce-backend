@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package com.example.product;
+
+import "google/protobuf/empty.proto";
+
+option java_package = 'com.example.product';
+option java_multiple_files = true;
+
+
+service ProductService {
+
+  rpc ListProducts (google.protobuf.Empty) returns (ListProductResponse);
+}
+
+message ListProductResponse {
+  repeated ProductProto products = 1;
+}
+
+message ProductProto {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  double price = 4;
+}
