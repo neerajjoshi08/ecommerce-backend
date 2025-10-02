@@ -5,7 +5,6 @@ import com.google.protobuf.Empty;
 public class RequestValidator {
 
 
-  public static void validateListProducts(Empty request) {
-    return;
-  }
+    public static void validateListProducts(Empty request) {
+    }
 }

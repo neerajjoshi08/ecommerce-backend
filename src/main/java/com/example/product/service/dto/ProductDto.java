@@ -5,8 +5,8 @@ import lombok.Builder;
 @Builder(toBuilder = true)
 public class ProductDto {
 
-  String id;
-  String name;
-  String description;
-  double price;
+    String id;
+    String name;
+    String description;
+    double price;
 }

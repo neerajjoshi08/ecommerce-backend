@@ -8,20 +8,20 @@ import lombok.Getter;
 @Getter
 public class ProductException extends StatusRuntimeException {
 
-  private final Code code;
-  private final String message;
+    private final Code code;
+    private final String message;
 
-  public ProductException(Status status, String message) {
-    super(status);
-    this.code = status.getCode();
-    this.message = message;
-  }
+    public ProductException(Status status, String message) {
+        super(status);
+        this.code = status.getCode();
+        this.message = message;
+    }
 
-  @Override
-  public String toString() {
-    return "ProductException{" +
-        "code=" + code +
-        ", message='" + message + '\'' +
-        '}';
-  }
+    @Override
+    public String toString() {
+        return "ProductException{" +
+                "code=" + code +
+                ", message='" + message + '\'' +
+                '}';
+    }
 }

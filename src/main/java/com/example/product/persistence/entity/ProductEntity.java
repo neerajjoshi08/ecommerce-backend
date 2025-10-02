@@ -15,15 +15,15 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "products")
 public class ProductEntity extends BaseEntity {
 
-  @Id
-  private String id;
+    @Id
+    private String id;
 
-  @Column
-  private String name;
+    @Column
+    private String name;
 
-  @Column
-  private String description;
+    @Column
+    private String description;
 
-  @Column
-  private double price;
+    @Column
+    private double price;
 }

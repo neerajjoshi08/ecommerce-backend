@@ -11,15 +11,15 @@ import org.lognet.springboot.grpc.recovery.GRpcServiceAdvice;
 @Slf4j
 public class ExceptionHandler {
 
-  @GRpcExceptionHandler
-  public Status MyCustomExceptionHandler(ProductException productException,
-      GRpcExceptionScope scope) {
+    @GRpcExceptionHandler
+    public Status MyCustomExceptionHandler(ProductException productException,
+                                           GRpcExceptionScope scope) {
 
-    log.error("Exception: {}", productException.toString());
+        log.error("Exception: {}", productException.toString());
 
-    Metadata responseHeaders = scope.getResponseHeaders();
+        Metadata responseHeaders = scope.getResponseHeaders();
 //    ErrorDetailsProto errorDetailsProto = ErrorDetailsProto.
 
-    return Status.INTERNAL;
-  }
+        return Status.INTERNAL;
+    }
 }

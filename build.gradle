@@ -4,7 +4,8 @@ plugins {
     id 'org.springframework.boot' version '3.3.2'
     id 'io.spring.dependency-management' version '1.1.6'
     id 'com.google.protobuf' version "0.8.18"
-    id "io.github.lognet.grpc-spring-boot" version '5.1.5'
+    id 'io.github.lognet.grpc-spring-boot' version '5.1.5'
+    id 'org.jetbrains.kotlin.jvm'
 }
 
 group = 'com.example'
@@ -53,10 +54,13 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     implementation 'org.mapstruct:mapstruct:1.5.5.Final'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+    implementation 'io.temporal:temporal-spring-boot-starter:1.26.2'
 
     // Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'io.temporal:temporal-testing:1.26.2'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 
 }
 
@@ -69,5 +73,8 @@ jar {
 }
 
 bootJar {
-    mainClass = 'com.example.MainApplication'
+    mainClass = 'com.example.product.MainApplication'
+}
+kotlin {
+    jvmToolchain(21)
 }

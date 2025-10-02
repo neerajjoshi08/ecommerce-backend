@@ -11,6 +11,7 @@ option java_multiple_files = true;
 service ProductService {
 
   rpc ListProducts (google.protobuf.Empty) returns (ListProductResponse);
+  rpc sayHello (stream HelloRequest) returns (stream HelloResponse);
 }
 
 message ListProductResponse {
@@ -22,4 +23,12 @@ message ProductProto {
   string name = 2;
   string description = 3;
   double price = 4;
+}
+
+message HelloRequest {
+  string name = 1;
+}
+
+message HelloResponse {
+  string message = 1;
 }
