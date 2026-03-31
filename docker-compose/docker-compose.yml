@@ -3,7 +3,7 @@ services:
     image: mysql:8.2.0
     container_name: products-service-mysql
     ports:
-      - 5306:3306
+      - "5306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     volumes:
@@ -23,7 +23,7 @@ services:
     networks:
       - temporal-network
     ports:
-      - 9200:9200
+      - "9200:9200"
     volumes:
       - /var/lib/elasticsearch/data
   mysql:
@@ -34,7 +34,7 @@ services:
     networks:
       - temporal-network
     ports:
-      - 3306:3306
+      - "3306:3306"
     volumes:
       - /var/lib/mysql
   temporal:
@@ -55,7 +55,7 @@ services:
     networks:
       - temporal-network
     ports:
-      - 7233:7233
+      - "7233:7233"
     volumes:
       - ./dynamicconfig:/etc/temporal/config/dynamicconfig
   temporal-admin-tools:
@@ -81,7 +81,7 @@ services:
     networks:
       - temporal-network
     ports:
-      - 8080:8080
+      - "8080:8080"
 networks:
   temporal-network:
     driver: bridge
