@@ -1,100 +1,116 @@
 plugins {
-    id("java")
-    id("idea")
+    java
+    idea
 
-    id("org.springframework.boot") version "3.4.4"
-    id("io.spring.dependency-management") version "1.1.6"
+    alias(libs.plugins.spring.boot)
+    alias(libs.plugins.spring.dependency.management)
 
-    id("com.google.protobuf") version "0.9.5"
+    alias(libs.plugins.protobuf)
 
-    id("org.jetbrains.kotlin.jvm") version "2.2.0"
-    id("org.jetbrains.kotlin.kapt") version "2.2.0"
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.kapt)
+
+    alias(libs.plugins.spotless)
 }
 
 group = "com.example"
 version = "0.0.1-SNAPSHOT"
 
-repositories {
-    mavenCentral()
-}
+val osName = System.getProperty("os.name").lowercase()
+val osArch = System.getProperty("os.arch").lowercase()
+
+val isMacArm =
+    osName.contains("mac") &&
+        (osArch == "aarch64" || osArch == "arm64")
+
+val grpcVersion = libs.versions.grpc.get()
+val protobufVersion = libs.versions.protobuf.java.get()
 
 dependencies {
 
     // Spring Boot
-    implementation("org.springframework.boot:spring-boot-starter")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation(libs.spring.boot.starter)
+    implementation(libs.spring.boot.starter.data.jpa)
 
     // gRPC
-    implementation(platform("io.grpc:grpc-bom:1.81.0"))
+    implementation(platform(libs.grpc.bom))
 
-    implementation("io.grpc:grpc-protobuf")
-    implementation("io.grpc:grpc-stub")
-    implementation("io.github.lognet:grpc-spring-boot-starter:5.2.0")
+    implementation(libs.grpc.protobuf)
+    implementation(libs.grpc.stub)
+    implementation(libs.lognet.grpc.starter)
 
     // Jakarta
-    compileOnly("jakarta.annotation:jakarta.annotation-api")
+    compileOnly(libs.jakarta.annotation)
 
     // MySQL
-    runtimeOnly("com.mysql:mysql-connector-j")
+    runtimeOnly(libs.mysql.connector)
 
     // MapStruct
-    implementation("org.mapstruct:mapstruct:1.5.5.Final")
-    kapt("org.mapstruct:mapstruct-processor:1.5.5.Final")
+    implementation(libs.mapstruct)
+    kapt(libs.mapstruct.processor)
 
     // Temporal
-    implementation("io.temporal:temporal-spring-boot-starter:1.40.0")
+    implementation(libs.temporal.spring.boot)
+
+    // Kotlin
+    implementation(kotlin("reflect"))
 
     // Tests
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    testImplementation("io.temporal:temporal-testing:1.40.0")
+    testImplementation(libs.spring.boot.starter.test)
+    testRuntimeOnly(libs.junit.platform.launcher)
+    testImplementation(libs.temporal.testing)
     testImplementation(kotlin("test"))
-
-    implementation(kotlin("reflect"))
 }
 
-// IntelliJ IDEA
-idea {
-    module {
-        isDownloadJavadoc = true
-        isDownloadSources = true
-    }
-}
-
-// Local Protobuf executables
-val protocExecutable = file(
-    "${System.getProperty("user.home")}/.local/bin/protoc"
-)
-
-val grpcExecutable = file(
-    "${System.getProperty("user.home")}/.local/bin/protoc-gen-grpc-java"
-)
-
-// Validate executable paths
-require(protocExecutable.exists() && protocExecutable.canExecute()) {
-    "Protoc executable not found or not executable: $protocExecutable"
-}
-
-require(grpcExecutable.exists() && grpcExecutable.canExecute()) {
-    "gRPC executable not found or not executable: $grpcExecutable"
-}
-
-// Protobuf and gRPC configuration
 protobuf {
 
-    // Use local protoc executable instead of Maven artifact
     protoc {
-        path = protocExecutable.absolutePath
-    }
+        if (isMacArm) {
+            val protocExecutable =
+                file(
+                    "${System.getProperty("user.home")}/.local/bin/protoc",
+                )
 
-    // Use local gRPC code generator instead of Maven artifact
-    plugins {
-        create("grpc") {
-            path = grpcExecutable.absolutePath
+            require(protocExecutable.exists() && protocExecutable.canExecute()) {
+                """
+                Protoc executable not found or not executable:
+                $protocExecutable
+
+                Install protoc in ~/.local/bin/protoc
+                """.trimIndent()
+            }
+
+            path = protocExecutable.absolutePath
+        } else {
+            artifact =
+                "com.google.protobuf:protoc:$protobufVersion"
         }
     }
 
-    // Generate Java and gRPC sources
+    plugins {
+        create("grpc") {
+            if (isMacArm) {
+                val grpcExecutable =
+                    file(
+                        "${System.getProperty("user.home")}/.local/bin/protoc-gen-grpc-java",
+                    )
+
+                require(grpcExecutable.exists() && grpcExecutable.canExecute()) {
+                    """
+                    gRPC executable not found or not executable:
+                    $grpcExecutable
+
+                    Install protoc-gen-grpc-java in ~/.local/bin/
+                    """.trimIndent()
+                }
+                path = grpcExecutable.absolutePath
+            } else {
+                artifact =
+                    "io.grpc:protoc-gen-grpc-java:$grpcVersion"
+            }
+        }
+    }
+
     generateProtoTasks {
         all().forEach { task ->
             task.plugins {
@@ -104,34 +120,97 @@ protobuf {
     }
 }
 
-// Tests
-tasks.test {
-    useJUnitPlatform()
+idea {
+    module {
+        isDownloadJavadoc = true
+        isDownloadSources = true
+    }
 }
 
-// Disable regular JAR
-tasks.jar {
-    enabled = false
-}
-
-// Spring Boot executable JAR
-tasks.bootJar {
-    mainClass.set("com.example.product.MainApplication")
-}
-
-// Java 21
 java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
 
-// Kotlin 21
 kotlin {
     jvmToolchain(21)
 }
 
-// KAPT
 kapt {
     correctErrorTypes = true
+
+    arguments {
+        arg("mapstruct.defaultComponentModel", "spring")
+    }
+}
+
+spotless {
+
+    kotlin {
+        target("src/**/*.kt")
+
+        ktlint(libs.versions.ktlint.get())
+            .editorConfigOverride(
+                mapOf(
+                    "max_line_length" to "100",
+                    "ktlint_standard_max-line-length" to "enabled",
+                ),
+            )
+
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+
+    kotlinGradle {
+        target("*.gradle.kts", "gradle/*.gradle.kts")
+
+        ktlint(libs.versions.ktlint.get())
+            .editorConfigOverride(
+                mapOf(
+                    "max_line_length" to "100",
+                    "ktlint_standard_max-line-length" to "enabled",
+                ),
+            )
+
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+
+    java {
+        target("src/**/*.java")
+
+        googleJavaFormat(
+            libs.versions.google.java.format
+                .get(),
+        )
+
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+
+    format("misc") {
+        target(
+            "**/*.md",
+            ".gitignore",
+            "**/*.yml",
+            "**/*.yaml",
+        )
+
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+}
+
+tasks.test {
+    useJUnitPlatform()
+}
+
+tasks.jar {
+    enabled = false
+}
+
+tasks.bootJar {
+    mainClass.set("com.example.product.MainApplication")
 }
