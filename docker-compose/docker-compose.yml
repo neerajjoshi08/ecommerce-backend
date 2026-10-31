@@ -88,7 +88,7 @@ services:
       - temporal-network
 
     volumes:
-      - ./temporal-scripts:/scripts:ro
+      - ../scripts:/scripts:ro
 
     entrypoint: ["/bin/sh"]
     command: ["/scripts/setup-mysql-es.sh"]
@@ -151,7 +151,7 @@ services:
       - temporal-network
 
     volumes:
-      - ./temporal-scripts:/scripts:ro
+      - ../scripts:/scripts:ro
 
     entrypoint: ["/bin/sh"]
     command: ["/scripts/create-namespace.sh"]
