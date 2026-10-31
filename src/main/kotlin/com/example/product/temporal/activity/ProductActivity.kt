@@ -5,7 +5,6 @@ import io.temporal.activity.ActivityMethod
 
 @ActivityInterface
 interface ProductActivity {
-
     @ActivityMethod
     fun initializeProducts(): String
 }

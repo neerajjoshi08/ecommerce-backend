@@ -24,7 +24,9 @@ val isMacArm =
         (osArch == "aarch64" || osArch == "arm64")
 
 val grpcVersion = libs.versions.grpc.get()
-val protobufVersion = libs.versions.protobuf.java.get()
+val protobufVersion =
+    libs.versions.protobuf.java
+        .get()
 
 dependencies {
 
@@ -168,7 +170,7 @@ spotless {
         ktlint(libs.versions.ktlint.get())
             .editorConfigOverride(
                 mapOf(
-                    "max_line_length" to "100",
+                    "max_line_length" to "120",
                     "ktlint_standard_max-line-length" to "enabled",
                 ),
             )

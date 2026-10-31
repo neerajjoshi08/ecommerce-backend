@@ -4,15 +4,15 @@ import io.grpc.ManagedChannelBuilder
 import io.grpc.stub.StreamObserver
 import org.junit.jupiter.api.Test
 import org.lognet.springboot.grpc.context.LocalRunningGrpcPort
-
 import java.util.concurrent.Executors
 
 class MainApplicationTest {
-
     @LocalRunningGrpcPort
     private val port: Int = 8080
 
-    private val channel = ManagedChannelBuilder.forAddress("localhost", 6565)
+    private val channel =
+        ManagedChannelBuilder
+            .forAddress("localhost", 6565)
             .usePlaintext()
             .build()
 
@@ -23,7 +23,7 @@ class MainApplicationTest {
         val executorService = Executors.newFixedThreadPool(10)
         val runnable = {
             println(
-                "Working some work by thread: " + Thread.currentThread().name
+                "Working some work by thread: " + Thread.currentThread().name,
             )
         }
 
@@ -33,24 +33,27 @@ class MainApplicationTest {
     }
 
     @Test
-    fun `gRPC test`(){
-
+    fun `gRPC test`() {
         val responseObserver = HelloResponseObserver()
-        val helloRequestStreamObserver = productServiceStub.sayHello(
-                responseObserver)
-        helloRequestStreamObserver.onNext(HelloRequest.newBuilder()
-                .setName("First name").build())
+        val helloRequestStreamObserver =
+            productServiceStub.sayHello(
+                responseObserver,
+            )
+        helloRequestStreamObserver.onNext(
+            HelloRequest
+                .newBuilder()
+                .setName("First name")
+                .build(),
+        )
     }
 }
 
 class HelloResponseObserver : StreamObserver<HelloResponse> {
-
-    override fun onNext(value: HelloResponse ) {
+    override fun onNext(value: HelloResponse) {
         println("Received the response: $value")
     }
 
     override fun onError(t: Throwable) {
-
     }
 
     override fun onCompleted() {

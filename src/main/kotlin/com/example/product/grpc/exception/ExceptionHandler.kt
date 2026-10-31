@@ -13,9 +13,8 @@ class ExceptionHandler {
     @GRpcExceptionHandler
     fun myCustomExceptionHandler(
         productException: ProductException,
-        scope: GRpcExceptionScope
+        scope: GRpcExceptionScope,
     ): Status {
-
         log.error("Exception: {}", productException.toString())
 
         val responseHeaders = scope.getResponseHeaders()

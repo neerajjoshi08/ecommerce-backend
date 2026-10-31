@@ -14,38 +14,40 @@ import io.grpc.stub.StreamObserver
 import org.lognet.springboot.grpc.GRpcService
 
 @GRpcService
-class ProductServiceImpl(private val listProductService: ListProductService) :
-    ProductServiceGrpc.ProductServiceImplBase() {
-
+class ProductServiceImpl(
+    private val listProductService: ListProductService,
+) : ProductServiceGrpc.ProductServiceImplBase() {
     override fun listProducts(
         request: Empty,
-        responseObserver: StreamObserver<ListProductResponse>
+        responseObserver: StreamObserver<ListProductResponse>,
     ) {
         RequestValidator.validateListProducts(request)
 
         val products = listProductService.listProducts()
 
-        val productProtos = ProductProtoMapper.INSTANCE.productsDtoToProductsProto(
-            products
-        )
+        val productProtos =
+            ProductProtoMapper.INSTANCE.productsDtoToProductsProto(products)
 
-        val listProductResponse = ListProductResponse.newBuilder()
-            .addAllProducts(productProtos)
-            .build()
+        val listProductResponse =
+            ListProductResponse
+                .newBuilder()
+                .addAllProducts(productProtos)
+                .build()
 
         responseObserver.onNext(listProductResponse)
         responseObserver.onError(StatusRuntimeException(Status.ALREADY_EXISTS))
         responseObserver.onCompleted()
     }
 
-    override fun sayHello(responseObserver: StreamObserver<HelloResponse>): StreamObserver<HelloRequest> {
+    override fun sayHello(
+        responseObserver: StreamObserver<HelloResponse>,
+    ): StreamObserver<HelloRequest> {
         val requestObserver = HelloRequestObserver()
         responseObserver.onNext(HelloResponse.newBuilder().setMessage("Hello! From Server").build())
         return requestObserver
     }
 
     class HelloRequestObserver : StreamObserver<HelloRequest> {
-
         override fun onNext(value: HelloRequest) {
             println("Received request: $value")
         }

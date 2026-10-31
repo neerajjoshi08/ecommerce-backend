@@ -16,38 +16,43 @@ class GrpcIntegrationTest {
     private lateinit var requestObserver: StreamObserver<ChatRequest>
     private val countDownLatch = CountDownLatch(1)
 
-
     @BeforeAll
     fun beforeAll() {
-        val channel = ManagedChannelBuilder.forAddress("localhost", 50051)
-            .usePlaintext()
-            .build()
+        val channel =
+            ManagedChannelBuilder
+                .forAddress("localhost", 50051)
+                .usePlaintext()
+                .build()
 
         val stub = HelloServiceGrpc.newStub(channel)
         requestObserver =
-            stub.chat(object : StreamObserver<ChatResponse> {
-                override fun onNext(value: ChatResponse) {
-                    LoggerUtil.info("Got a response from the server...")
-                    LoggerUtil.info(value.toString())
-                }
+            stub.chat(
+                object : StreamObserver<ChatResponse> {
+                    override fun onNext(value: ChatResponse) {
+                        LoggerUtil.info("Got a response from the server...")
+                        LoggerUtil.info(value.toString())
+                    }
 
-                override fun onError(t: Throwable?) {
-                }
+                    override fun onError(t: Throwable?) {
+                    }
 
-                override fun onCompleted() {
-                    countDownLatch.countDown()
-                    LoggerUtil.info("Stream completed.")
-                }
-            })
+                    override fun onCompleted() {
+                        countDownLatch.countDown()
+                        LoggerUtil.info("Stream completed.")
+                    }
+                },
+            )
     }
 
     @Test
     fun testStreamingRequest() {
         Thread {
             for (i in 1..100) {
-                val request = ChatRequest.newBuilder()
-                    .setMessage("hello-$i")
-                    .build()
+                val request =
+                    ChatRequest
+                        .newBuilder()
+                        .setMessage("hello-$i")
+                        .build()
                 synchronized(requestObserver) {
                     requestObserver.onNext(request)
                 }
@@ -58,9 +63,11 @@ class GrpcIntegrationTest {
 
         Thread {
             for (i in 1..100) {
-                val request = ChatRequest.newBuilder()
-                    .setMessage("world-$i")
-                    .build()
+                val request =
+                    ChatRequest
+                        .newBuilder()
+                        .setMessage("world-$i")
+                        .build()
                 synchronized(requestObserver) {
                     requestObserver.onNext(request)
                 }

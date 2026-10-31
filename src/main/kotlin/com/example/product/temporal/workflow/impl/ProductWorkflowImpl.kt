@@ -12,18 +12,18 @@ import java.time.Duration
 
 @WorkflowImpl(taskQueues = [Constants.PRODUCTS_TASK_QUEUE])
 class ProductWorkflowImpl : ProductWorkflow {
-
     private val log = LoggerFactory.getLogger(ProductWorkflowImpl::class.java)
 
     private val productActivity =
         Workflow.newActivityStub(ProductActivity::class.java, getActivityOptions())
 
-    private fun getActivityOptions(): ActivityOptions {
-        return ActivityOptions.newBuilder().setStartToCloseTimeout(Duration.ofSeconds(10))
+    private fun getActivityOptions() =
+        ActivityOptions
+            .newBuilder()
+            .setStartToCloseTimeout(Duration.ofSeconds(10))
             .setRetryOptions(
-                RetryOptions.newBuilder().build()
+                RetryOptions.newBuilder().build(),
             ).build()
-    }
 
     override fun loadProducts(): String {
         log.info("Inside load")

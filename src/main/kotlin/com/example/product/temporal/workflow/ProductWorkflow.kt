@@ -5,7 +5,6 @@ import io.temporal.workflow.WorkflowMethod
 
 @WorkflowInterface
 interface ProductWorkflow {
-
     @WorkflowMethod
     fun loadProducts(): String
 }

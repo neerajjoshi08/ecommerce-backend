@@ -9,9 +9,8 @@ import org.springframework.stereotype.Service
 
 @Service
 class ListProductServiceImpl(
-    private val productRepository: ProductRepository
+    private val productRepository: ProductRepository,
 ) : ListProductService {
-
     private val log = LoggerFactory.getLogger(ListProductServiceImpl::class.java)
 
     override fun listProducts(): List<ProductDto> {
