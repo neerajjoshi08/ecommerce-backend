@@ -57,6 +57,13 @@ dependencies {
     // Kotlin
     implementation(kotlin("reflect"))
 
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.reactor)
+    testImplementation(libs.kotlinx.coroutines.test)
+
+    implementation(libs.dagger)
+    kapt(libs.dagger.compiler)
+
     // Tests
     testImplementation(libs.spring.boot.starter.test)
     testRuntimeOnly(libs.junit.platform.launcher)

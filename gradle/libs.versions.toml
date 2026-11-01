@@ -11,6 +11,8 @@ mapstruct = "1.5.5.Final"
 temporal = "1.40.0"
 ktlint = "1.5.0"
 google-java-format = "1.25.2"
+kotlinx-coroutines = "1.10.2"
+dagger = "2.60.1"
 
 [libraries]
 # Spring Boot
@@ -32,6 +34,14 @@ mapstruct-processor = { module = "org.mapstruct:mapstruct-processor", version.re
 # Temporal
 temporal-spring-boot = { module = "io.temporal:temporal-spring-boot-starter", version.ref = "temporal" }
 temporal-testing = { module = "io.temporal:temporal-testing", version.ref = "temporal" }
+
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-reactor = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-reactor", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
+
+dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
+dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
+
 # Testing
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
 
